@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BugBounty Dorkhub v2.0</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1055/1055646.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sticky-header">
+            <div class="header-content">
+                <h1>BugBounty Dorkhub v2.0</h1>
+                <div class="controls-panel">
+                    <div class="input-section">
+                        <div>
+                            <label for="target">Target Domain:</label>
+                            <div class="input-with-clear">
+                                <input type="text" id="target" placeholder="example.com">
+                                <button type="button" class="clear-input-btn" onclick="clearTargetInput()" aria-label="Clear target domain">X</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="github-org">GitHub Organization <span style="color: #999; font-size: 0.85em;"></span>:</label>
+                            <div class="input-with-clear">
+                                <input type="text" id="github-org" placeholder="e.g., example-org">
+                                <button type="button" class="clear-input-btn" onclick="clearGithubOrgInput()" aria-label="Clear GitHub organization">X</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="search-engine">Search Engine:</label>
+                            <select id="search-engine">
+                                <option value="google">Google</option>
+                                <option value="duckduckgo">DuckDuckGo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="reset-all-small" onclick="resetAllProgress()">
+                        Reset All
+                    </button>
+                </div>
+            </div>
+        </div>
+        <details open>
+            <summary>
+                <span class="summary-title">Search Engines & Platforms</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="(function(btn){ var targetDomain = document.getElementById('target').value || 'example.com'; var dorkTemplate = 'site:example.com'; var dork = dorkTemplate.replace(/example\.com/g, targetDomain); window.open('https://www.google.com/search?q=' + encodeURIComponent(dork), '_blank'); btn.classList.add('completed'); saveProgress(btn, dorkTemplate); })(this)">Google</button>
+                <button class="futuristic-button" onclick="(function(btn){ var targetDomain = document.getElementById('target').value || 'example.com'; var dorkTemplate = 'site:example.com'; var dork = dorkTemplate.replace(/example\.com/g, targetDomain); window.open('https://duckduckgo.com/?q=' + encodeURIComponent(dork), '_blank'); btn.classList.add('completed'); saveProgress(btn, dorkTemplate); })(this)">DuckDuckGo</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('&quot;' + getGithubOrg() + '&quot;') + '&type=host', '_blank')">Github</button>
+                <button class="futuristic-button" onclick="window.open('https://gitlab.com/search?search=' + document.getElementById('target').value + '&scope=projects', '_blank')">GitLab</button>
+                
+            </div>
+        </details>
+                <details open>
+            <summary>
+                <span class="summary-title">Infrastructure</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://www.shodan.io/search?query=hostname:' + document.getElementById('target').value, '_blank')">Shodan</button>
+                <button class="futuristic-button" onclick="window.open('https://platform.censys.io/search?q=' + document.getElementById('target').value, '_blank')">Censys</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">Vulnerability Discovery</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                    <button class="futuristic-button" onclick="runDork('site:example.com intitle:index.of')">
+                        <span class="btn-text">Directory Listings</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com ext:xml | ext:conf | ext:cnf | ext:reg | ext:inf | ext:rdp | ext:cfg | ext:txt | ext:ora | ext:ini')">
+                        <span class="btn-text">Config Files</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com ext:sql | ext:dbf | ext:mdb')">
+                        <span class="btn-text">Database Files</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com ext:log')">
+                        <span class="btn-text">Log Files</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com ext:bkf | ext:bkp | ext:bak | ext:old | ext:backup')">
+                        <span class="btn-text">Backup Files</span>
+                    </button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">Authentication & Access</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:login')">
+                        <span class="btn-text">Login Pages</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:admin')">
+                        <span class="btn-text">Admin Panels</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:dashboard')">
+                        <span class="btn-text">Dashboards</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:register')">
+                        <span class="btn-text">Registration</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:auth')">
+                        <span class="btn-text">Auth Pages</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com (intext:Login OR intext:Register or intext:Create Account)')">
+                        <span class="btn-text">Login/Register (intext)</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com AND (intitle:Login OR intitle:Register or intitle:Create An Account)')">
+                        <span class="btn-text">Login/Register (intitle)</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com (inurl:/signin OR inurl:/login OR inurl:/register)')">
+                        <span class="btn-text">Sign-in URLs</span>
+                    </button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">Web Application Testing</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:wp- | inurl:wp-content | inurl:plugins | inurl:uploads | inurl:themes | inurl:download')">
+                        <span class="btn-text">WordPress</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com intext:&quot;sql syntax near&quot; | intext:&quot;syntax error has occurred&quot; | intext:&quot;incorrect syntax near&quot; | intext:&quot;unexpected end of SQL command&quot; | intext:&quot;Warning: mysql_connect()&quot; | intext:&quot;Warning: mysql_query()&quot; | intext:&quot;Warning: pg_connect()&quot;')">
+                        <span class="btn-text">SQL Errors</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com ext:php intitle:phpinfo published')">
+                        <span class="btn-text">phpinfo</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com  inurl:readme | inurl:license | inurl:install | inurl:setup | inurl:config')">
+                        <span class="btn-text">Install/Setup</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:redir | inurl:url | inurl:redirect | inurl:return | inurl:src=http | inurl:r=http')">
+                        <span class="btn-text">Open Redirects</span>
+                    </button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">API Endpoints & Reconnaissance</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                    <button class="futuristic-button" onclick="runDork('inurl:apidocs | inurl:api-docs | inurl:swagger | inurl:api-explorer site:example.com')">
+                        <span class="btn-text">API Docs</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('site:example.com inurl:api | site:*/rest | site:*/v1 | site:*/v2 | site:*/v3')">
+                        <span class="btn-text">API Endpoints</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('inurl:gitlab example.com')">
+                        <span class="btn-text">GitLab</span>
+                    </button>
+                    <button class="futuristic-button" onclick="runDork('inurl:example.com /.git')">
+                        <span class="btn-text">.git Folder</span>
+                    </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com inurl:&quot;/wp-json/wp/v2/users&quot;')">WP JSON Users</button>
+                <button class="futuristic-button" onclick="runDork('site:example.com intitle:&quot;index.of&quot; intext:&quot;api.txt&quot;')">API Keys (api.txt)</button>
+                <button class="futuristic-button" onclick="runDork('site:example.com intitle:&quot;index of&quot; api_key OR &quot;api key&quot; OR apiKey -pool')">API Key Index</button>
+                <button class="futuristic-button" onclick="runDork('site:example.com intitle:&quot;Swagger UI&quot; | inurl:swagger-ui | inurl:swagger.json')">Swagger UI</button>
+                <button class="futuristic-button" onclick="runDork('site:example.com inurl:/graphql | intitle:GraphQL')">GraphQL Endpoints</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">Sensitive Data & Credentials</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;api_key&quot; | &quot;apikey&quot; | &quot;api-key&quot;')">
+                    <span class="btn-text">API Keys</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;access_token&quot; | &quot;accessToken&quot;')">
+                    <span class="btn-text">Access Tokens</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;secret_key&quot; | &quot;secretKey&quot; | &quot;secret&quot;')">
+                    <span class="btn-text">Secret Keys</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;client_secret&quot; | &quot;clientSecret&quot;')">
+                    <span class="btn-text">Client Secrets</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;password&quot; | &quot;passwd&quot; | &quot;pwd&quot; ext:txt | ext:log')">
+                    <span class="btn-text">Passwords</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;bearer&quot; | &quot;authorization: Bearer&quot;')">
+                    <span class="btn-text">Bearer Tokens</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com &quot;aws_access_key_id&quot; | &quot;aws_secret_access_key&quot;')">
+                    <span class="btn-text">AWS Keys</span>
+                </button>
+                <button class="futuristic-button" onclick="runDork('site:example.com intext:&quot;apiKey&quot; ext:json | ext:config | ext:env')">
+                    <span class="btn-text">Config w/ API Keys</span>
+                </button>
+            </div>
+        </details>
+        <section class="github-dorks-section">
+            <div class="github-dorks-header">
+                <h2 class="github-dorks-title">GitHub Organization Dorks</h2>
+            </div>
+        <details open>
+            <summary>
+                <span class="summary-title">GitHub Dorks: Quick Keywords</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('filename:swagger.json &quot;' + getGithubOrg() + '&quot;') + '&type=code', '_blank')">filename:swagger.json</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('extension:json &quot;' + getGithubOrg() + '&quot; api') + '&type=code', '_blank')">extension:json</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('&quot;apiKey&quot; &quot;' + getGithubOrg() + '&quot;') + '&type=host', '_blank')">apiKey</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('&quot;api keys&quot; &quot;' + getGithubOrg() + '&quot;') + '&type=code', '_blank')">api keys</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">GitHub Dorks: Tokens & Secrets</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('access_token &quot;' + getGithubOrg() + '&quot;') + '&type=code', '_blank')">access_token</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('&quot;secret&quot; &quot;' + getGithubOrg() + '&quot;') + '&type=host', '_blank')">secret</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('&quot;token&quot; &quot;' + getGithubOrg() + '&quot;') + '&type=host', '_blank')">token</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (&quot;jwt_secret&quot; OR &quot;JWT_SECRET&quot; OR &quot;jwtSecret&quot;)') + '&type=code', '_blank')">JWT Secrets</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (GITHUB_TOKEN OR GITHUB_PAT OR GH_TOKEN)') + '&type=code', '_blank')">GitHub PATs</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">GitHub Dorks: Cloud & Infra</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (AWS_ACCESS_KEY_ID OR AWS_ACCESS_SECRET_KEY)') + '&type=code', '_blank')">AWS Keys</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (AZURE_CLIENT_SECRET OR AZURE_CLIENT_ID)') + '&type=code', '_blank')">Azure Credentials</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (CLOUDFLARE_API_TOKEN OR CF_API_TOKEN)') + '&type=code', '_blank')">Cloudflare Tokens</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; /\/(.*\.)?amazonaws\.com/') + '&type=code', '_blank')">AWS Endpoints</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; /\/(.*\.)?firebaseio\.com/') + '&type=code', '_blank')">Firebase Endpoints</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">GitHub Dorks: AI & SaaS Keys</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (&quot;sk_live_&quot; OR &quot;pk_live_&quot;)') + '&type=code', '_blank')">Stripe Keys</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; /&quot;sk-[a-zA-Z0-9]{20,50}&quot;/') + '&type=code', '_blank')">OpenAI API Key</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (ANTHROPIC_API_KEY OR anthropic_api_key)') + '&type=code', '_blank')">Anthropic API Key</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (SENDGRID_API_KEY OR sendgrid_api_key)') + '&type=code', '_blank')">SendGrid API Key</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (SLACK_BOT_TOKEN OR SLACK_WEBHOOK_URL)') + '&type=code', '_blank')">Slack Tokens</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">GitHub Dorks: Payments & DB</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (PAYPAL_CLIENT_SECRET OR paypal_client_secret)') + '&type=code', '_blank')">PayPal Credentials</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (SQUARE_ACCESS_TOKEN OR square_access_token)') + '&type=code', '_blank')">Square Tokens</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (&quot;mongodb://&quot; OR &quot;mongodb+srv://&quot; OR &quot;mysql://&quot;)') + '&type=code', '_blank')">DB Connection Strings</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (extension:pem OR extension:key OR extension:p12 OR extension:pfx)') + '&type=code', '_blank')">Certificate Files</button>
+            </div>
+        </details>
+        <details open>
+            <summary>
+                <span class="summary-title">GitHub Dorks: Files & Context</span>
+                <div class="summary-buttons">
+                    <button class="reset-category" onclick="resetCategoryButtons(this.closest('details'))">Reset</button>
+                </div>
+            </summary>
+            <div class="dork-buttons">
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; (filename:.env OR filename:.env.local OR filename:travis.yml OR filename:Dockerfile OR filename:docker-compose.yaml OR filename:package.json OR filename:web.config OR filename:settings.py)') + '&type=code', '_blank')">Config Files (.env++)</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('org:&quot;' + getGithubOrg() + '&quot; /http(s)?:\/\//') + '&type=code', '_blank')">Hard-coded Links</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('&quot;Bearer&quot; &quot;' + getGithubOrg() + '&quot;') + '&type=host', '_blank')">authorization: Bearer</button>
+                <button class="futuristic-button" onclick="window.open('https://github.com/search?q=' + encodeURIComponent('(org:&quot;' + getGithubOrg() + '&quot; AND &quot;' + (document.getElementById('target').value || 'example.com') + '&quot;) AND (extension:json OR extension:yaml)') + '&type=code', '_blank')">Org JSON/YAML + Domain</button>
+            </div>
+        </details>
+        </section>
+
+
+        <!-- Browser Extensions Section -->
+        <div class="extensions-section">
+            <h2 class="extensions-title">🚀 Browser Extensions</h2>
+            <p class="extensions-intro">Enhance your bug bounty workflow with our specialized Chrome extensions designed to streamline your reconnaissance process.</p>
+            
+            <div class="extension-cards">
+                <div class="extension-card">
+                    <div class="extension-icon">🔗</div>
+                    <h3>BugBounty Dorkhub Extension</h3>
+                    <p class="extension-description">
+                        <strong>Why you need it:</strong> Manually opening dozens of dork searches is time-consuming and browsers block multiple pop-ups. 
+                        This extension allows you to launch all dorks from an entire category with a single click, bypassing pop-up blockers 
+                        and saving you hours of repetitive work.
+                    </p>
+                    <ul class="extension-features">
+                        <li>✓ Open all category dorks at once</li>
+                        <li>✓ Bypass browser pop-up blockers</li>
+                        <li>✓ Auto-mark as completed</li>
+                        <li>✓ Save progress in localStorage</li>
+                    </ul>
+                </div>
+                
+                <div class="extension-card">
+                    <div class="extension-icon">📋</div>
+                    <h3>Search URL Extractor</h3>
+                    <p class="extension-description">
+                        <strong>Why you need it:</strong> After running dork searches, you need to collect and organize results efficiently. 
+                        This extension automatically extracts all URLs from Google and DuckDuckGo search results, eliminating tedious manual copying 
+                        and allowing you to quickly export targets for further analysis.
+                    </p>
+                    <ul class="extension-features">
+                        <li>✓ Auto-extract URLs from search results</li>
+                        <li>✓ Filter ads and internal links</li>
+                        <li>✓ Copy to clipboard instantly</li>
+                        <li>✓ Download as TXT file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation Guide Section -->
+        <div class="installation-section">
+            <h2 class="installation-title">📦 Extension Installation Guide</h2>
+            
+            <div class="installation-steps">
+                <div class="install-card">
+                    <h3>
+                        <span class="install-number">1</span>
+                        BugBounty Dorkhub Extension (Chrome)
+                    </h3>
+                    <div class="install-content">
+                        <ol>
+                            <li>Open Chrome and navigate to <code>chrome://extensions/</code></li>
+                            <li>Enable <strong>"Developer mode"</strong> in the top-right corner</li>
+                            <li>Click <strong>"Load unpacked"</strong> button</li>
+                            <li>Select the folder: <code>chrome-extension/</code> from this project</li>
+                            <li>You'll see a new <span class="highlight-green">"Open Category"</span> button in each category</li>
+                            <li>Enter your target domain and click the green button to open all dorks!</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="install-card">
+                    <h3>
+                        <span class="install-number">2</span>
+                        Search URL Extractor (Chrome)
+                    </h3>
+                    <div class="install-content">
+                        <ol>
+                            <li>Open Chrome and navigate to <code>chrome://extensions/</code></li>
+                            <li>Enable <strong>"Developer mode"</strong> in the top-right corner</li>
+                            <li>Click <strong>"Load unpacked"</strong> button</li>
+                            <li>Select the folder: <code>ddg-url-extractor/</code> from this project</li>
+                            <li>Visit <a href="https://www.google.com/search?q=example" target="_blank">Google</a> or <a href="https://duckduckgo.com/?q=example" target="_blank">DuckDuckGo</a> and perform any search</li>
+                            <li>Click the orange <span class="highlight-orange">"📋"</span> button that appears or open de Extension</li>
+                            <li>Copy or download all extracted URLs with one click!</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="installation-note">
+                <strong>💡 Pro Tip:</strong> Install both extensions for the complete workflow - use the Dorkhub Extension to run searches, 
+                then use the URL Extractor to collect results from Google or DuckDuckGo pages.
+                <br><br>
+                <strong>🦊 Firefox:</strong> Use <code>about:debugging#/runtime/this-firefox</code> and load
+                <code>firefox-extension-dorkhub/manifest.json</code> (helper) or
+                <code>firefox-ddg-url-extractor/manifest.json</code> (extractor).
+            </div>
+        </div>
+                
+        <footer class="footer">
+            <p>Created by <a href="https://github.com/0xRh4ps00dy" target="_blank" rel="noopener">0xRh4ps00dy</a></p>
+            <p class="disclaimer">⚠️ For educational and authorized security research only.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "BugBounty Dorkhub Helper",
+  "version": "1.3",
+  "description": "Open multiple dork searches at once without popup blockers",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "dorkhub-helper@example.com",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    }
+  },
+
+  "permissions": [
+    "tabs"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BugBounty Dorkhub Helper",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

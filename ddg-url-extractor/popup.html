@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="popup.css">
+    <title>Search URL Extractor</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Search</h1>
+            <h2>URL Extractor</h2>
+        </div>
+        
+        <div id="status" class="status">
+            <div class="status-icon">⏳</div>
+            <div class="status-text">Verificando página...</div>
+        </div>
+        
+        <div id="stats" class="stats hidden">
+            <div class="stat-item">
+                <div class="stat-label">URLs encontradas:</div>
+                <div class="stat-value" id="url-count">0</div>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h3>ℹ️ Cómo usar:</h3>
+            <ol>
+                <li>Ve a <strong>Google o DuckDuckGo</strong> y realiza una búsqueda</li>
+                <li>Haz clic en el botón <strong>"📋 Extraer URLs"</strong></li>
+                <li>Copia o descarga las URLs</li>
+            </ol>
+        </div>
+        
+        <button id="extract-btn" class="extract-btn hidden">
+            📋 Extraer URLs de esta página
+        </button>
+        
+        <div class="tips">
+            <h3>💡 Tips:</h3>
+            <ul>
+                <li>Scroll hacia abajo para cargar más resultados</li>
+                <li>Usa operadores de búsqueda para mejores resultados</li>
+                <li>Las URLs se filtran automáticamente (sin ads)</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>v1.0 | Creado por <a href="https://github.com/0xRh4ps00dy" target="_blank">0xRh4ps00dy</a></p>
+        </footer>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

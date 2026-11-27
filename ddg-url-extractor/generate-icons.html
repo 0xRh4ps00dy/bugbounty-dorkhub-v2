@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Google URL Extractor - Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .icon-preview {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        canvas {
+            border: 1px solid #ddd;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #de5833;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #d43b1c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google URL Extractor - Icon Generator</h1>
+    <p>Haz clic en los botones para descargar los iconos</p>
+    
+    <div class="icon-preview">
+        <h3>16x16</h3>
+        <canvas id="icon16" width="16" height="16"></canvas>
+        <button onclick="downloadIcon(16)">Descargar icon16.png</button>
+    </div>
+    
+    <div class="icon-preview">
+        <h3>48x48</h3>
+        <canvas id="icon48" width="48" height="48"></canvas>
+        <button onclick="downloadIcon(48)">Descargar icon48.png</button>
+    </div>
+    
+    <div class="icon-preview">
+        <h3>128x128</h3>
+        <canvas id="icon128" width="128" height="128"></canvas>
+        <button onclick="downloadIcon(128)">Descargar icon128.png</button>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#de5833');
+            gradient.addColorStop(1, '#d43b1c');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw clipboard icon
+            const scale = size / 128;
+            ctx.fillStyle = 'white';
+            
+            // Clipboard body
+            ctx.beginPath();
+            ctx.roundRect(30 * scale, 40 * scale, 68 * scale, 80 * scale, 8 * scale);
+            ctx.fill();
+            
+            // Clipboard clip
+            ctx.beginPath();
+            ctx.roundRect(48 * scale, 28 * scale, 32 * scale, 20 * scale, 4 * scale);
+            ctx.fill();
+            
+            // Lines representing text/URLs
+            ctx.fillStyle = '#de5833';
+            const lineY = [60, 75, 90];
+            lineY.forEach(y => {
+                ctx.fillRect(45 * scale, y * scale, 38 * scale, 4 * scale);
+            });
+        }
+        
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            const link = document.createElement('a');
+            link.download = `icon${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Draw icons on load
+        window.onload = function() {
+            drawIcon(document.getElementById('icon16'), 16);
+            drawIcon(document.getElementById('icon48'), 48);
+            drawIcon(document.getElementById('icon128'), 128);
+        };
+    </script>
+</body>
+</html>
